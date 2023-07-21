@@ -1,0 +1,14 @@
+column 설명
+
+date : 날짜
+day : 요일
+class : 좌석 등급
+departure : 출발시간
+arrival : 도착시간
+time : 소요시간
+landing : 경유횟수
+cost : 가격
+airline : 항공사
+port_d : 출발 공항
+port_a : 도착 공항
+via1-4 : 경유 공항
