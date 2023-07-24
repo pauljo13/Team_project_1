@@ -26,7 +26,7 @@ def check_in_out(driver,month,week):
 def driver_refresh():
     driver.implicitly_wait(5)
     good = driver.find_element(By.XPATH,'//*[@id="SideBarLocationFilters"]/div[12]/div[2]/ul/li[3]/span/span[1]/span')
-    good.click()
+    good.click()                        
     driver.implicitly_wait(2)
 
 # 스크롤 함수
@@ -140,6 +140,8 @@ for i in day_list:
     print('검색결과')
     driver_refresh()
 
+
+
     check_in_day = driver.find_element(By.XPATH, '//*[@id="check-in-box"]/div/div/div/div[1]').text
     check_in_week = driver.find_element(By.XPATH, '//*[@id="check-in-box"]/div/div/div/div[2]').text
 
@@ -181,3 +183,5 @@ for i in day_list:
     driver.quit()
     count += 1
     print('성공적으로 파일이 만들어졌습니다.')
+
+    
