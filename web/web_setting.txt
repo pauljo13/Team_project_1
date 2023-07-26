@@ -1,0 +1,2 @@
+repository url: https://github.com/Gavintain/travel_cost_hunter
+web url: https://travel-cost-hunter.streamlit.app/
