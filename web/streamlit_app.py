@@ -1,38 +1,90 @@
-from collections import namedtuple
-import altair as alt
-import math
-import pandas as pd
 import streamlit as st
 
-"""
-# Welcome to Streamlit!
+def main():
+    # 사이드바 스타일을 적용하기 위한 CSS 스타일
+    st.markdown(
+        """
+        <style>
+        .sidebar .sidebar-content {
+            background-color: #f8f9fa;
+        }
+        .sidebar .sidebar-item {
+            font-size: 20px;
+            color: #007bff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .sidebar .sidebar-item:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .special-word {
+                color: blue;
+                font-weight: bold;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
+    page_style = """
+    <style>
+        /* 타이틀을 상단 중앙에 정렬하는 스타일 */
+        .title {
+            text-align: center;
+            margin-top: 20px;
+            color: black;
+            font-size: 40px;
+        }
+        /* 페이지 배경 이미지를 지정하는 스타일 */
+        body {
+            background-image: '/img/undraw_background.png';
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    </style>
+    """
+    st.markdown(page_style, unsafe_allow_html=True)
 
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+    # 타이틀 표시
+    st.markdown("<h1 class='title'>Travel Cost Hunter</h1>", unsafe_allow_html=True)
 
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+    # 사이드바에서 페이지 선택
+    selected_page = st.sidebar.selectbox("Menu", ["Home", "Travel Cost Prediction", "DashBoard"])
+
+    # 각 페이지의 내용을 표시
+    if selected_page == "Home":
+
+        """
 
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+        Travel Cost Hunter에 오신 것을 환영합니다 !
 
-    Point = namedtuple('Point', 'x y')
-    data = []
+        Travel Cost Hunter는 사용자가 가고자 하는 여행지와 관련된 여행 경비를 쉽고 간단하게 알아볼 수 있는 서비스를 제공합니다.
 
-    points_per_turn = total_points / num_turns
+        현재 Travel Cost Hunter 서비스 범위는 2023년 9월 한국에서 미국으로의 여행 경비로, 해당 항공권과 숙박권 데이터를 기준으로 서비스를 제공합니다.
 
-    for curr_point_num in range(total_points):
-        curr_turn, i = divmod(curr_point_num, points_per_turn)
-        angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
-        radius = curr_point_num / total_points
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        data.append(Point(x, y))
 
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+        """
+        
+        st.write("여행 경비를 간단하게 예측하고 싶다면 사이드 메뉴를 통해 <span class='special-word'>Travel Cost Prediction</span> 페이지로 이동하세요!", unsafe_allow_html=True)
+        st.write("항공권, 숙박권 등에 대한 여행 경비 데이터들을 직접 확인하고 싶다면 사이드 메뉴를 통해 <span class='special-word'>DashBoard</span> 페이지로 이동하세요!", unsafe_allow_html=True)
+        st.caption('\n\nTeam I5 ')
+
+
+    elif selected_page == "DashBoard":
+        st.write("이곳은 대시보드 페이지입니다. 대시보드 연결을 기다립니다..")
+        st.caption('\n\nTeam I5 ')
+
+        
+    elif selected_page == "Travel Cost Prediction":
+        st.write("이곳은 여행 경비 예측 모델을 사용해 볼 수 있는 페이지입니다. 모델을 기다립니다..")
+        st.caption('\n\nTeam I5 ')
+
+if __name__ == "__main__":
+    main()
