@@ -1,4 +1,5 @@
 import streamlit as st
+import requests
 
 def main():
     # 사이드바 스타일을 적용하기 위한 CSS 스타일
@@ -71,7 +72,6 @@ def main():
 
 
         """
-        
         st.write("여행 경비를 간단하게 예측하고 싶다면 사이드 메뉴를 통해 <span class='special-word'>Travel Cost Prediction</span> 페이지로 이동하세요!", unsafe_allow_html=True)
         st.write("항공권, 숙박권 등에 대한 여행 경비 데이터들을 직접 확인하고 싶다면 사이드 메뉴를 통해 <span class='special-word'>DashBoard</span> 페이지로 이동하세요!", unsafe_allow_html=True)
         st.caption('\n\nTeam I5 ')
@@ -81,6 +81,38 @@ def main():
         st.write("이곳은 대시보드 페이지입니다. 대시보드 연결을 기다립니다..")
         st.caption('\n\nTeam I5 ')
 
+        # # Metabase 설정
+        # METABASE_URL = "https://your-metabase-url.com"
+        # METABASE_USERNAME = "your-metabase-username"
+        # METABASE_PASSWORD = "your-metabase-password"
+        # DASHBOARD_ID = 1
+
+        # # Metabase API 로그인
+        # def metabase_login():
+        #     url = f"{METABASE_URL}/api/session"
+        #     data = {
+        #         "username": METABASE_USERNAME,
+        #         "password": METABASE_PASSWORD
+        #     }
+        #     response = requests.post(url, json=data)
+        #     return response.json()["id"]
+
+        # # 대시보드 데이터 가져오기
+        # def get_dashboard_data():
+        #     session_id = metabase_login()
+        #     url = f"{METABASE_URL}/api/dashboard/{DASHBOARD_ID}/query"
+        #     headers = {
+        #         "X-Metabase-Session": session_id
+        #     }
+        #     response = requests.get(url, headers=headers)
+        #     return response.json()
+
+        # dashboard_data = get_dashboard_data()
+
+        # # Streamlit에서 대시보드 데이터 시각화 또는 표시
+        # # 예: 테이블 또는 차트로 데이터를 시각화하거나 필요한 방식으로 표시
+        # st.write("대시보드 데이터:")
+        # st.write(dashboard_data)
         
     elif selected_page == "Travel Cost Prediction":
         st.write("이곳은 여행 경비 예측 모델을 사용해 볼 수 있는 페이지입니다. 모델을 기다립니다..")
