@@ -15,6 +15,8 @@ import random
 import datetime
 from datetime import datetime, timedelta
 
+# Metabase 설정
+METABASE_URL = "https://teami5.metabaseapp.com/public/dashboard/20c55ded-717f-4edd-ad63-89af2654c8da"
 
 # ## 비행시간 출력 함수
 # def Flight_Time(Departure_or_entry,Class,Flight_type):
@@ -58,6 +60,35 @@ from datetime import datetime, timedelta
 #                          'departure_hour': hour, 
 #                          'departure_date_day': day, 
 #                          'departure_day': week})
+
+
+# # Metabase API 로그인
+# def metabase_login():
+#     url = f"{METABASE_URL}/api/session"
+#     data = {
+#         "username": METABASE_USERNAME,
+#         "password": METABASE_PASSWORD
+#     }
+#     response = requests.post(url, json=data)
+#     response_json = response.json()
+#     if "id" in response_json:
+#         return response_json["id"]
+#     else:
+#         raise ValueError("Failed to log in to Metabase API. Check your credentials and URL.")
+
+# # 대시보드 데이터 가져오기
+# def get_dashboard_data():
+#     try:
+#         session_id = metabase_login()
+#         url = f"{METABASE_URL}/api/dashboard/{DASHBOARD_ID}/query"
+#         headers = {
+#             "X-Metabase-Session": session_id
+#         }
+#         response = requests.get(url, headers=headers)
+#         return response.json()
+#     except Exception as e:
+#         st.error(f"Error occurred while fetching dashboard data: {e}")
+
 
 def main():
     # 사이드바 스타일을 적용하기 위한 CSS 스타일
@@ -110,6 +141,17 @@ def main():
             background-position: center;
             background-attachment: fixed;
         }
+        .iframe-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 800px;
+        }
+        .iframe {
+            width: 1300px;
+            height: 800px;
+            border: none;
+        }
     </style>
     """
     st.markdown(page_style, unsafe_allow_html=True)
@@ -140,42 +182,12 @@ def main():
 
 
     elif selected_page == "DashBoard":
-        st.write("이곳은 대시보드 페이지입니다. 대시보드 연결을 기다립니다..")
+        
+        # dashboard_data = get_dashboard_data()
+        st.write(f'<div class="iframe-container"><iframe class="iframe" src="{METABASE_URL}"></iframe></div>', unsafe_allow_html=True)
+        st.write(page_style, unsafe_allow_html=True)
         st.caption('\n\nTeam I5 ')
 
-        # # Metabase 설정
-        # METABASE_URL = "https://your-metabase-url.com"
-        # METABASE_USERNAME = "your-metabase-username"
-        # METABASE_PASSWORD = "your-metabase-password"
-        # DASHBOARD_ID = 1
-
-        # # Metabase API 로그인
-        # def metabase_login():
-        #     url = f"{METABASE_URL}/api/session"
-        #     data = {
-        #         "username": METABASE_USERNAME,
-        #         "password": METABASE_PASSWORD
-        #     }
-        #     response = requests.post(url, json=data)
-        #     return response.json()["id"]
-
-        # # 대시보드 데이터 가져오기
-        # def get_dashboard_data():
-        #     session_id = metabase_login()
-        #     url = f"{METABASE_URL}/api/dashboard/{DASHBOARD_ID}/query"
-        #     headers = {
-        #         "X-Metabase-Session": session_id
-        #     }
-        #     response = requests.get(url, headers=headers)
-        #     return response.json()
-
-        # dashboard_data = get_dashboard_data()
-
-        # # Streamlit에서 대시보드 데이터 시각화 또는 표시
-        # # 예: 테이블 또는 차트로 데이터를 시각화하거나 필요한 방식으로 표시
-        # st.write("대시보드 데이터:")
-        # st.write(dashboard_data)
-        
     elif selected_page == "Travel Cost Prediction":
         
         st.write("원하시는 일정의 항공권에 대한 가격을 예측하고 싶다면 몇 가지 데이터를 입력해 주세요.")
@@ -223,7 +235,6 @@ def main():
         # Flight_type = input() #직항 경유 선택 여부(직항 : 0 / 경유 회수 : 1, 2, 3, 4)
         # entry_df = Make_DataFrame(Departure_or_entry,Date)
 
-        
         # # 출국(KA -> LA)
         # with open('departure.pkl','rb') as pickle_file:
         #     model_departure = pickle.load(pickle_file)
