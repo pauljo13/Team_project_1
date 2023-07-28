@@ -1,69 +1,62 @@
 import streamlit as st
 import pandas as pd
-from datetime import date
-import datetime
 import sqlite3
 
-
-def create_connection(sqlite_db):
-    global conn
+# SQLite 데이터베이스에 연결
+def create_connection():
     conn = None
     try:
-        conn=sqlite3.connect(sqlite_db)
+        conn = sqlite3.connect('sqlite.db.db')  # 데이터베이스 파일 경로를 입력
         return conn
     except sqlite3.Error as e:
-        st.error(e)
+        print(e)
     return conn
 
-#쿼리실행함수
-def get_unique_values(conn,check_in_day,location,score):
-    try:
-        cursor=conn.cursor()
-        query =f"""
-        SELECT ('Name,price')
-        From accommodation'
-        WHERE check_in_day = '{check_in_day}'
-        AND location = '{location}'
-        AND score >= '{score}'
+col1,col2,col3,col4 = st.columns(4)
+# 입력값
+def get_user_input(conn):
+    locations_query= "SELECT DISTINCT location FROM accommodation;"
+    locations = pd.read_sql_query(locations_query,conn)['location'].tolist()
+    
+    with col1:
+        check_in_day = st.date_input('날짜를 선택하세요.')
+    with col2:
+        location = st.selectbox('지역을 입력하세요.',locations)
+    with col3:
+        score = st.slider('평점을 선택하세요.', 5.0, 10.0)
+    
+    return check_in_day, location, score
+
+# 쿼리를 실행하는 함수
+def run_query(conn, check_in_day, location, score):
+    query = f'''
+        SELECT Name, price
+        FROM accommodation
+        WHERE check_in_day = '{check_in_day}' AND location = '{location}' AND score >= {score}
         ORDER BY price ASC
         LIMIT 5;
-        """
-        cursor.execute(query)
-        result = cursor.fetchall()
-        return [row[0] for row in result]
-    except sqlite3.Error as e:
-        st.error(e)
+    '''
+    result = pd.read_sql_query(query, conn)
+    with col4:
+        return result
 
+# 메인 함수
 def main():
-    if st.button("조건입력"):
-        conn = create_connection('C:\Users\user\Desktop\AI_bootcamp\Sectionmine\streamlit_website')
-        if conn is not None:
-            st.success("조건을 검색해주세요")
-        else:
-            st.error("오류가 떴습니다")
-
-    if conn is not None:
-        location = get_unique_values(conn, "location_column")
-        if location:
-            selected_location = st.selectbox("장소 선택", location)
-            st.write("선택한 장소:", selected_location)
-        else:
-            st.warning("데이터베이스에 장소 데이터가 없습니다.")
+    st.title('여행경비예측서비스')
     
-    date = st.date_input("날짜 입력")
-    rating = st.slider("평점 입력", min_value=5, max_value=10, value=5)
+    conn = create_connection()
+    if conn is None:
+        st.error('데이터베이스 연결에 실패했습니다.')
+        return
     
-    if st.button("검색"):
-        if conn is not None:
-            # 호텔 검색 쿼리 실행
-            result = search_hotels(conn,check_in_day, location, score)
-            if len(result) > 0:
-                # 검색 결과 출력
-                st.subheader("검색 결과:")
-                for i, (Name, price) in enumerate(result, 1):
-                    st.write(f"{i}. {Name} - {price}원")
-            else:
-                st.warning("조건에 해당하는 호텔이 없습니다.")
+    check_in_day, location, score = get_user_input(conn)
+    
+    if st.button('검색'):
+        if not check_in_day or not location:
+            st.warning('날짜와 지역을 입력해주세요.')
+        else:
+            result = run_query(conn, check_in_day, location,score)
+            st.table(result)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
