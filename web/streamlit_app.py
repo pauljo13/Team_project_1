@@ -98,6 +98,7 @@ def main():
             color: black;
             font-size: 40px;
         }
+        
         /* 페이지 배경 이미지를 지정하는 스타일 */
         body {
             background-image: '/img/undraw_background.png';
@@ -128,6 +129,38 @@ def main():
         .righted-btn {
         display: flex;
         justify-content: right;
+        }
+        .stylish-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+        .app-description {
+                    text-align: left;
+                    font-size: 18px;
+                    color: #333;
+                    margin-bottom: 30px;
+        }
+        .result-section {
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-radius: 10px;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .flight-info {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .price-result {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
     </style>
     """
@@ -169,7 +202,7 @@ def main():
     elif selected_page == "Travel Cost Prediction":
         predict_process_page = st.session_state.get("predict_process_page", "시작페이지")
         if predict_process_page == "시작페이지":
-            st.write("Travel Cost Hunter는 출국 항공권,귀국 항공권 그리고 숙박권을 바탕으로 총 여행 경비를 예측합니다. 출국 항공권,귀국 항공권 그리고 숙박권에 대한 몇 가지 데이터를 입력해주시면 예측해드리겠습니다!")
+            st.markdown('<div class="app-description">Travel Cost Hunter 는 출국 항공권, 귀국 항공권 그리고 숙박권을 바탕으로 총 여행 경비를 예측합니다. <br>출국 항공권, 귀국 항공권 그리고 숙박권에 대한 몇 가지 데이터를 입력해주시면 예측해드리겠습니다!</div>', unsafe_allow_html=True)
             st.caption('\n\nTeam I5 ')
             col1, col2, col3 = st.columns([0.31, 0.33, 0.1])
             with col2:
@@ -371,7 +404,8 @@ def main():
                 with col3:
                     score = st.slider('최소 평점을 선택하세요.', 5.0, 10.0)
                 if check_in_day.year != 23 and check_in_day.month != 9:
-                    st.write("<span class='warning-text'>23년도 9월만 서비스 가능합니다. 날짜를 확인해주세요.</span>",unsafe_allow_html=True)
+                    st.write(f""" 현재 체크인 날짜: {check_in_day} """)
+                    st.write("<span class='warning-text'>23년도 9월만 서비스 가능합니다. 출국 항공권 날짜를 확인해주세요.</span>",unsafe_allow_html=True)
                 return check_in_day, location, score
 
             # 쿼리를 실행하는 함수
@@ -426,6 +460,12 @@ def main():
                     st.experimental_rerun()
 
         elif predict_process_page == "최종결과":
+            airlines_dict2 = {1:'국내 항공사',0:'국외 항공사'}
+            class_dict2 = {1:"이코노미", 2:"비지니스", 3:"프리미엄 이코노미", 4:"퍼스트"}
+            airport_dic2 = {1:"인천국제공항(ICN)",2:"김포공항(GMP)",3:"로스엔젤레스국제공항(LAX)",4:"할리우드버뱅크공항(BUR)"}
+            flight_type_dict2 = {0:'직항',1:'경유 1회',2:'경유 2회',3:'경유 3회',4:'경유 4회'}
+            weekday_dict = {0:"월",1:"화",2:"수",3:"목",4:"금",5:"토",6:"일"}
+
             departure_pred = st.session_state['departure_pred']
             homecoming_pred = st.session_state['homecoming_pred']
             df_departure = st.session_state['df_departure']
@@ -434,13 +474,40 @@ def main():
             homecoming_result = st.session_state['homecoming_result']
             result = format(int(departure_pred+homecoming_pred), ',d')
             
-            st.table(df_departure)
-            st.table(df_homecoming)
-            st.write(f'{departure_result}원')
-            st.write(f'{homecoming_result}원')
-            st.write(f'{result}원')
+            st.header("여행 경비 예측 결과")
+
+            # Custom styled result section
+
+            # 출국 항공권 정보 및 예상 비용
+            st.subheader("선택하신 항공권 예상 비용은")
+            
+            st.markdown('<div class="flight-info">', unsafe_allow_html=True)
+            st.write(f"""출국 항공권\n
+                        9월 {df_departure['departure_date'][0]}일 {weekday_dict[df_departure['departure_week'][0]]}요일 {df_departure['departure_time'][0]}시 출발 
+                        {airlines_dict2[df_departure['interior_airlines'][0]]} {class_dict2[df_departure['class'][0]]}좌석 {flight_type_dict2[df_departure['flight_type'][0]]} 비행시간: {df_departure['flight_time_hour'][0]}시간 
+                        출발공항:{airport_dic2[df_departure['port_d'][0]]} 도착공항:{airport_dic2[df_departure['port_a'][0]]}
+                        """)
+            st.markdown('</div>', unsafe_allow_html=True)
+            st.write(f'=> <span class="price-result">{departure_result}원</span>', unsafe_allow_html=True)
+
+            # 귀국 항공권 정보 및 예상 비용
+            st.markdown('<div class="flight-info">', unsafe_allow_html=True)
+            st.write(f"""귀국 항공권\n
+                        9월 {df_homecoming['departure_date'][0]}일 {weekday_dict[df_homecoming['departure_week'][0]]}요일 {df_homecoming['departure_time'][0]}시 출발 
+                        {airlines_dict2[df_homecoming['interior_airlines'][0]]} {class_dict2[df_homecoming['class'][0]]}좌석 {flight_type_dict2[df_homecoming['flight_type'][0]]} 비행시간: {df_homecoming['flight_time_hour'][0]}시간 
+                        출발공항:{airport_dic2[df_homecoming['port_d'][0]]} 도착공항:{airport_dic2[df_homecoming['port_a'][0]]}
+                        """)
+            st.markdown('</div>', unsafe_allow_html=True)
+            st.write(f'=> <span class="price-result">{homecoming_result}원</span>', unsafe_allow_html=True)
+
+            # Close the styled result section
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.write(f'<div class="stylish-text">총 {result}원 입니다.</div>',unsafe_allow_html=True)
+
+
             st.caption('\n\nTeam I5 ')
-            col1, col2, col3 = st.columns([0.28, 0.2, 0.20])
+            col1, col2, col3 = st.columns([0.28, 0.23, 0.20])
             with col1:
                 if st.button("시작페이지로", key="Travel Cost Prediction from predict to start page"):
                     st.session_state.predict_process_page = "시작페이지"
