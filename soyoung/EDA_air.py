@@ -3,8 +3,8 @@ import numpy as np
 import re
 import datetime as datetime
 
-# df = pd.read_csv('KRtoLA copy.csv')
-# df1 = pd.read_csv('LAtoKR.csv')
+df = pd.read_csv('KRtoLA copy.csv')
+df1 = pd.read_csv('LAtoKR.csv')
 
 # 컬럼 이름 통일
 df = df[['departuredate', 'departureday', 'departuretime', 'class', 'arrivaldate', 'arrivalday', 'arrivaltime', 'flighttime', 'flighttype', 'price', 'airlines', 'portd', 'porta']]
